@@ -307,4 +307,27 @@ describe("Build Transaction", async () => {
     expect(vi.mocked(estimateComputeUnitLimitFactory)).toHaveBeenCalled();
     expect(tx).toBeDefined();
   });
+
+  it("Should build transaction with fallback compute units when simulation fails", async () => {
+    vi.mocked(estimateComputeUnitLimitFactory).mockReturnValueOnce(
+      vi.fn().mockRejectedValueOnce(new Error("Simulation failed")),
+    );
+
+    const tx = await buildTransactionWithConfig([transferInstruction], signer, {
+      rpcConfig,
+      computeUnitLimitStrategy: { type: "dynamic" },
+    });
+
+    expect(vi.mocked(estimateComputeUnitLimitFactory)).toHaveBeenCalled();
+    expect(tx).toBeDefined();
+
+    const decodedIxs = await decodeTransaction(
+      getBase64EncodedWireTransaction(tx),
+    );
+
+    const computeUnitIxs = decodedIxs.filter(
+      (ix) => ix.programAddress === computeUnitProgramId,
+    );
+    assert.strictEqual(computeUnitIxs.length >= 1, true);
+  });
 });
