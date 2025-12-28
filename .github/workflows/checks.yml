@@ -28,6 +28,11 @@ jobs:
           rustup toolchain install 1.86.0 --profile minimal
           rustup default 1.86.0
 
+      - name: Install system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libudev-dev pkg-config
+
       - name: Install dependencies
         run: yarn install
 
@@ -62,6 +67,11 @@ jobs:
           rustup toolchain install 1.86.0 --profile minimal
           rustup default 1.86.0
           rustup component add clippy rustfmt
+
+      - name: Install system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libudev-dev pkg-config
 
       - name: Install dependencies
         run: yarn install
