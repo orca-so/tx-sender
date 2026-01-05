@@ -1,0 +1,9 @@
+(function() {
+    var implementors = Object.fromEntries([["orca_tx_sender",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.86.0/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"enum\" href=\"orca_tx_sender/enum.ComputeUnitLimitStrategy.html\" title=\"enum orca_tx_sender::ComputeUnitLimitStrategy\">ComputeUnitLimitStrategy</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.86.0/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"struct\" href=\"orca_tx_sender/struct.BuildTransactionConfig.html\" title=\"struct orca_tx_sender::BuildTransactionConfig\">BuildTransactionConfig</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.86.0/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"struct\" href=\"orca_tx_sender/struct.ComputeConfig.html\" title=\"struct orca_tx_sender::ComputeConfig\">ComputeConfig</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.86.0/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"struct\" href=\"orca_tx_sender/struct.FeeConfig.html\" title=\"struct orca_tx_sender::FeeConfig\">FeeConfig</a>"],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.86.0/core/default/trait.Default.html\" title=\"trait core::default::Default\">Default</a> for <a class=\"struct\" href=\"orca_tx_sender/struct.RpcConfig.html\" title=\"struct orca_tx_sender::RpcConfig\">RpcConfig</a>"]]]]);
+    if (window.register_implementors) {
+        window.register_implementors(implementors);
+    } else {
+        window.pending_implementors = implementors;
+    }
+})()
+//{"start":57,"fragment_lengths":[1510]}

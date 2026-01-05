@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["orca_tx_sender"]};

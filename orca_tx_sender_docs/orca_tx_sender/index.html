@@ -1,0 +1,286 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="orca_tx_sender"><title>orca_tx_sender_docs::orca_tx_sender - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-6c3ea77c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="orca_tx_sender_docs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.86.0 (05f9846f8 2025-03-31)" data-channel="1.86.0" data-search-js="search-581efc7a.js" data-settings-js="settings-6dad6058.js" ><script src="../../static.files/storage-3a5871a4.js"></script><script defer src="../sidebar-items.js"></script><script defer src="../../static.files/main-4d63596a.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc mod"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../orca_tx_sender_docs/index.html">orca_<wbr>tx_<wbr>sender_<wbr>docs</a><span class="version">0.0.1</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">Module orca_<wbr>tx_<wbr>sender</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#orca_tx_sender" title="orca_tx_sender">orca_tx_sender</a><ul><li><a href="#features" title="Features">Features</a></li><li><a href="#version-compatibility" title="Version Compatibility">Version Compatibility</a></li><li><a href="#installation" title="Installation">Installation</a></li><li><a href="#usage-examples" title="Usage Examples">Usage Examples</a></li><li><a href="#per-function-configuration-examples" title="Per-Function Configuration Examples">Per-Function Configuration Examples</a></li><li><a href="#global-configuration-examples" title="Global Configuration Examples">Global Configuration Examples</a></li><li><a href="#global-configuration-options" title="Global Configuration Options">Global Configuration Options</a></li><li><a href="#testing" title="Testing">Testing</a></li><li><a href="#license" title="License">License</a></li></ul></li></ul><h3><a href="#structs">Module Items</a></h3><ul class="block"><li><a href="#structs" title="Structs">Structs</a></li><li><a href="#enums" title="Enums">Enums</a></li><li><a href="#traits" title="Traits">Traits</a></li><li><a href="#functions" title="Functions">Functions</a></li></ul></section><div id="rustdoc-modnav"><h2 class="in-crate"><a href="../index.html">In crate orca_<wbr>tx_<wbr>sender_<wbr>docs</a></h2></div></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">orca_tx_sender_docs</a></div><h1>Module <span>orca_tx_sender</span><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/orca_tx_sender_docs/lib.rs.html#1">Source</a> </span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="orca_tx_sender"><a class="doc-anchor" href="#orca_tx_sender">§</a>orca_tx_sender</h2>
+<p>A Rust crate for building and sending Solana transactions with priority fees and Jito tips.</p>
+<h3 id="features"><a class="doc-anchor" href="#features">§</a>Features</h3>
+<ul>
+<li>Dynamic priority fee calculation based on recent network fees</li>
+<li>Jito tip support for MEV extraction</li>
+<li>Automatic compute unit budget estimation</li>
+<li>Retry logic with exponential backoff</li>
+<li>Configurable transaction parameters</li>
+<li>Async/await support with Tokio</li>
+<li>Global configuration with thread-safe access</li>
+</ul>
+<h3 id="version-compatibility"><a class="doc-anchor" href="#version-compatibility">§</a>Version Compatibility</h3>
+<ul>
+<li>Solana CLI: &gt;=1.16, &lt;3.0</li>
+<li>Solana SDK: &gt;=1.16</li>
+</ul>
+<h3 id="installation"><a class="doc-anchor" href="#installation">§</a>Installation</h3>
+<p>Add the following to your <code>Cargo.toml</code>:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+orca_tx_sender = { version = &quot;0.1.0&quot; }</code></pre></div><h3 id="usage-examples"><a class="doc-anchor" href="#usage-examples">§</a>Usage Examples</h3><h3 id="per-function-configuration-examples"><a class="doc-anchor" href="#per-function-configuration-examples">§</a>Per-Function Configuration Examples</h3>
+<p>Below is an example of how to use the per-function configuration for <code>build_and_send_transaction_with_config</code>. However, you can also use the per-function configuration for the build and send steps separately using the following functions: <code>build_transaction_with_config</code> and <code>send_transaction_with_config</code>.</p>
+<h4 id="basic-example"><a class="doc-anchor" href="#basic-example">§</a>Basic Example</h4>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>orca_tx_sender::{
+    build_and_send_transaction_with_config,
+    PriorityFeeStrategy, Percentile,
+    set_priority_fee_strategy
+};
+<span class="kw">use </span>solana_sdk::pubkey::Pubkey;
+<span class="kw">use </span>solana_sdk::signature::{Keypair, Signer};
+<span class="kw">use </span>solana_sdk::system_instruction;
+<span class="kw">use </span>solana_sdk::commitment_config::CommitmentLevel;
+<span class="kw">use </span>std::error::Error;
+<span class="kw">use </span>std::str::FromStr;
+
+<span class="attr">#[tokio::main]
+</span><span class="kw">async fn </span>main() -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>Error&gt;&gt; {
+    <span class="kw">let </span>rpc_client = RpcClient::new(<span class="string">"https://api.mainnet-beta.solana.com"</span>);
+
+    <span class="comment">// Use the cluster URL to create a new instance of RpcConfig. You can also create the struct manually.
+    </span><span class="kw">let </span>rpc_config = RpcConfig::new(rpc_client.url());
+
+    <span class="comment">// Configure the fee config with priority fees
+    </span><span class="kw">let </span>fee_config = FeeConfig {
+        priority_fee_strategy: PriorityFeeStrategy::Dynamic {
+            percentile: Percentile::P95,
+            max_lamports: <span class="number">10_000</span>,
+        },
+        ..Default::default()
+    };
+
+    <span class="comment">// Create a keypair for signing
+    </span><span class="kw">let </span>payer = Keypair::new();
+    <span class="macro">println!</span>(<span class="string">"Using keypair: {}"</span>, payer.pubkey());
+
+    <span class="comment">// Check balance
+    </span><span class="kw">let </span>balance = client.get_balance(<span class="kw-2">&amp;</span>payer.pubkey()).<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="macro">println!</span>(<span class="string">"Account balance: {} lamports"</span>, balance);
+
+    <span class="comment">// Jupiter Program address as an example recipient
+    </span><span class="kw">let </span>recipient = Pubkey::from_str(<span class="string">"JUP2jxvXaqu7NQY1GmNF4m1vodw12LVXYxbFL2uJvfo"</span>).unwrap();
+
+    <span class="comment">// Create transfer instruction
+    </span><span class="kw">let </span>transfer_ix = system_instruction::transfer(
+        <span class="kw-2">&amp;</span>payer.pubkey(),
+        <span class="kw-2">&amp;</span>recipient,
+        <span class="number">1_000_000</span>, <span class="comment">// 0.001 SOL
+    </span>);
+
+    <span class="comment">// Build and send transaction
+    </span><span class="macro">println!</span>(<span class="string">"Sending transaction..."</span>);
+    <span class="kw">let </span>signature = build_and_send_transaction_with_config(
+        <span class="macro">vec!</span>[transfer_ix],
+        <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>payer],
+        <span class="prelude-val">Some</span>(CommitmentLevel::Confirmed),
+        <span class="prelude-val">None</span>, <span class="comment">// No address lookup tables
+        </span><span class="kw-2">&amp;</span>rpc_client,
+        <span class="kw-2">&amp;</span>rpc_config,
+        <span class="kw-2">&amp;</span>fee_config,
+    ).<span class="kw">await</span><span class="question-mark">?</span>;
+
+    <span class="macro">println!</span>(<span class="string">"Transaction sent: {}"</span>, signature);
+    <span class="prelude-val">Ok</span>(())
+}</code></pre></div>
+<h3 id="global-configuration-examples"><a class="doc-anchor" href="#global-configuration-examples">§</a>Global Configuration Examples</h3><h4 id="basic-example-1"><a class="doc-anchor" href="#basic-example-1">§</a>Basic Example</h4>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>orca_tx_sender::{
+    build_and_send_transaction,
+    PriorityFeeStrategy, Percentile,
+    set_priority_fee_strategy, set_rpc, get_rpc_client
+};
+<span class="kw">use </span>solana_sdk::pubkey::Pubkey;
+<span class="kw">use </span>solana_sdk::signature::{Keypair, Signer};
+<span class="kw">use </span>solana_sdk::system_instruction;
+<span class="kw">use </span>solana_sdk::commitment_config::CommitmentLevel;
+<span class="kw">use </span>std::error::Error;
+<span class="kw">use </span>std::str::FromStr;
+
+<span class="attr">#[tokio::main]
+</span><span class="kw">async fn </span>main() -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>Error&gt;&gt; {
+    <span class="comment">// Initialize RPC configuration (required!)
+    </span>set_rpc(<span class="string">"https://api.mainnet-beta.solana.com"</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+
+    <span class="comment">// Check connection
+    </span><span class="kw">let </span>client = get_rpc_client()<span class="question-mark">?</span>;
+    <span class="macro">println!</span>(<span class="string">"Connected to Solana"</span>);
+
+    <span class="comment">// Configure priority fees
+    </span>set_priority_fee_strategy(PriorityFeeStrategy::Dynamic {
+        percentile: Percentile::P95,
+        max_lamports: <span class="number">10_000</span>,
+    })<span class="question-mark">?</span>;
+
+    <span class="comment">// Create a keypair for signing
+    </span><span class="kw">let </span>payer = Keypair::new();
+    <span class="macro">println!</span>(<span class="string">"Using keypair: {}"</span>, payer.pubkey());
+
+    <span class="comment">// Check balance
+    </span><span class="kw">let </span>balance = client.get_balance(<span class="kw-2">&amp;</span>payer.pubkey()).<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="macro">println!</span>(<span class="string">"Account balance: {} lamports"</span>, balance);
+
+    <span class="comment">// Jupiter Program address as an example recipient
+    </span><span class="kw">let </span>recipient = Pubkey::from_str(<span class="string">"JUP2jxvXaqu7NQY1GmNF4m1vodw12LVXYxbFL2uJvfo"</span>).unwrap();
+
+    <span class="comment">// Create transfer instruction
+    </span><span class="kw">let </span>transfer_ix = system_instruction::transfer(
+        <span class="kw-2">&amp;</span>payer.pubkey(),
+        <span class="kw-2">&amp;</span>recipient,
+        <span class="number">1_000_000</span>, <span class="comment">// 0.001 SOL
+    </span>);
+
+    <span class="comment">// Build and send transaction
+    </span><span class="macro">println!</span>(<span class="string">"Sending transaction..."</span>);
+    <span class="kw">let </span>signature = build_and_send_transaction(
+        <span class="macro">vec!</span>[transfer_ix],
+        <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>payer],
+        <span class="prelude-val">Some</span>(CommitmentLevel::Confirmed),
+        <span class="prelude-val">None</span>, <span class="comment">// No address lookup tables
+    </span>).<span class="kw">await</span><span class="question-mark">?</span>;
+
+    <span class="macro">println!</span>(<span class="string">"Transaction sent: {}"</span>, signature);
+    <span class="prelude-val">Ok</span>(())
+}</code></pre></div>
+<h4 id="example-with-jito-fees"><a class="doc-anchor" href="#example-with-jito-fees">§</a>Example With Jito Fees</h4>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>orca_tx_sender::{
+    build_and_send_transaction,
+    JitoFeeStrategy, Percentile, JitoPercentile, PriorityFeeStrategy, SendOptions,
+    set_priority_fee_strategy, set_jito_fee_strategy, set_compute_unit_margin_multiplier,
+    set_jito_block_engine_url, set_rpc, get_rpc_client
+};
+<span class="kw">use </span>solana_sdk::pubkey::Pubkey;
+<span class="kw">use </span>solana_sdk::signature::{Keypair, Signer};
+<span class="kw">use </span>solana_sdk::system_instruction;
+<span class="kw">use </span>solana_sdk::commitment_config::CommitmentLevel;
+<span class="kw">use </span>std::error::Error;
+<span class="kw">use </span>std::str::FromStr;
+
+<span class="attr">#[tokio::main]
+</span><span class="kw">async fn </span>main() -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>Error&gt;&gt; {
+    <span class="comment">// Initialize RPC configuration (required!)
+    </span>set_rpc(<span class="string">"https://api.mainnet-beta.solana.com"</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+
+    <span class="comment">// Check connection
+    </span><span class="kw">let </span>client = get_rpc_client()<span class="question-mark">?</span>;
+    <span class="macro">println!</span>(<span class="string">"Connected to Solana"</span>);
+
+    <span class="comment">// Configure fee settings with dynamic priority fees and Jito fees
+    </span><span class="kw">let </span>compute_multiplier = <span class="number">1.1</span>;
+    <span class="kw">let </span>jito_url = <span class="string">"https://bundles.jito.wtf"</span>.to_string();
+
+    <span class="comment">// Set individual configuration options
+    </span>set_priority_fee_strategy(PriorityFeeStrategy::Dynamic {
+        percentile: Percentile::P95,
+        max_lamports: <span class="number">10_000</span>,
+    })<span class="question-mark">?</span>;
+
+    set_jito_fee_strategy(JitoFeeStrategy::Dynamic {
+        percentile: JitoPercentile::P95,
+        max_lamports: <span class="number">10_000</span>,
+    })<span class="question-mark">?</span>;
+    set_compute_unit_margin_multiplier(compute_multiplier)<span class="question-mark">?</span>;
+    set_jito_block_engine_url(jito_url.clone())<span class="question-mark">?</span>;
+
+    <span class="comment">// Create a keypair for signing
+    </span><span class="kw">let </span>payer = Keypair::new();
+    <span class="macro">println!</span>(<span class="string">"Using keypair: {}"</span>, payer.pubkey());
+
+    <span class="comment">// Check balance
+    </span><span class="kw">let </span>balance = client.get_balance(<span class="kw-2">&amp;</span>payer.pubkey()).<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="macro">println!</span>(<span class="string">"Account balance: {} lamports"</span>, balance);
+
+    <span class="comment">// Jupiter Program address as an example recipient
+    </span><span class="kw">let </span>recipient = Pubkey::from_str(<span class="string">"JUP2jxvXaqu7NQY1GmNF4m1vodw12LVXYxbFL2uJvfo"</span>).unwrap();
+
+    <span class="comment">// Create transfer instruction
+    </span><span class="kw">let </span>transfer_ix = system_instruction::transfer(
+        <span class="kw-2">&amp;</span>payer.pubkey(),
+        <span class="kw-2">&amp;</span>recipient,
+        <span class="number">1_000_000</span>, <span class="comment">// 0.001 SOL
+    </span>);
+
+    <span class="comment">// Build and send transaction
+    </span><span class="macro">println!</span>(<span class="string">"Sending transaction with priority fees and Jito fees..."</span>);
+    <span class="kw">let </span>signature = build_and_send_transaction(
+        <span class="macro">vec!</span>[transfer_ix],
+        <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>payer],
+        <span class="prelude-val">Some</span>(CommitmentLevel::Confirmed),
+        <span class="prelude-val">None</span>, <span class="comment">// No address lookup tables
+    </span>).<span class="kw">await</span><span class="question-mark">?</span>;
+
+    <span class="macro">println!</span>(<span class="string">"Transaction sent: {}"</span>, signature);
+    <span class="prelude-val">Ok</span>(())
+}</code></pre></div>
+<h3 id="global-configuration-options"><a class="doc-anchor" href="#global-configuration-options">§</a>Global Configuration Options</h3><h4 id="rpc-configuration"><a class="doc-anchor" href="#rpc-configuration">§</a>RPC Configuration</h4>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// Must be explicitly set before sending transactions
+</span>set_rpc(<span class="string">"https://api.mainnet-beta.solana.com"</span>).<span class="kw">await</span><span class="question-mark">?</span>;</code></pre></div>
+<h4 id="fee-configuration"><a class="doc-anchor" href="#fee-configuration">§</a>Fee Configuration</h4>
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="comment">// Dynamic priority fees based on network conditions
+</span>set_priority_fee_strategy(PriorityFeeStrategy::Dynamic {
+    percentile: Percentile::P95,
+    max_lamports: <span class="number">1_000_000</span>, <span class="comment">// 1 SOL
+</span>})<span class="question-mark">?</span>;
+
+<span class="comment">// Fixed priority fee
+// set_priority_fee_strategy(PriorityFeeStrategy::Exact(10_000))?;
+
+// No priority fee
+// set_priority_fee_strategy(PriorityFeeStrategy::Disabled)?;
+
+// Configure Jito tips
+</span>set_jito_fee_strategy(JitoFeeStrategy::Dynamic {
+    percentile: JitoPercentile::P50,
+    max_lamports: <span class="number">500_000</span>, <span class="comment">// 0.5 SOL
+</span>})<span class="question-mark">?</span>;
+
+<span class="comment">// Set compute unit margin multiplier (default: 1.1)
+</span>set_compute_unit_margin_multiplier(<span class="number">1.2</span>)<span class="question-mark">?</span>;</code></pre></div>
+<h4 id="transaction-options"><a class="doc-anchor" href="#transaction-options">§</a>Transaction Options</h4>
+<p>Transaction options can be provided directly when sending:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code>
+<span class="comment">// Use with global configuration
+</span><span class="kw">let </span>signature = build_and_send_transaction(
+    instructions,
+    signers,
+    <span class="prelude-val">Some</span>(CommitmentLevel::Confirmed),
+    <span class="prelude-val">None</span>, <span class="comment">// No address lookup tables
+</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+
+<span class="comment">// With address lookup tables for account compression
+</span><span class="kw">let </span>signature = build_and_send_transaction(
+    instructions,
+    signers,
+    <span class="prelude-val">Some</span>(CommitmentLevel::Processed),
+    <span class="prelude-val">Some</span>(address_lookup_tables), <span class="comment">// With ALTs
+</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+
+<span class="comment">// Use default commitment level by passing None
+</span><span class="kw">let </span>signature = build_and_send_transaction(
+    instructions,
+    signers,
+    <span class="prelude-val">None</span>,
+    <span class="prelude-val">None</span>,
+).<span class="kw">await</span><span class="question-mark">?</span>;</code></pre></div>
+<h3 id="testing"><a class="doc-anchor" href="#testing">§</a>Testing</h3>
+<p>All testing and example code is located in the <code>examples</code> directory. You can run the examples directly:</p>
+<div class="example-wrap"><pre class="language-bash"><code># Priority fees only (no Jito fees)
+cargo run --example priority_only_test &quot;https://api.devnet.solana.com&quot;
+
+# With Jito fees
+cargo run --example with_jito_test &quot;https://api.mainnet-beta.solana.com&quot;
+
+# With address lookup tables
+cargo run --example with_lookup_tables &quot;https://api.mainnet-beta.solana.com&quot;</code></pre></div>
+<p>You can provide any custom RPC URL as a command-line argument. If no URL is provided,
+the examples will default to using the Solana devnet URL.</p>
+<h3 id="license"><a class="doc-anchor" href="#license">§</a>License</h3>
+<p>Orca License</p>
+<p>See <a href="../LICENSE">LICENSE</a> for details.</p>
+</div></details><h2 id="structs" class="section-header">Structs<a href="#structs" class="anchor">§</a></h2><dl class="item-table"><dt><a class="struct" href="struct.AddressLookupTableAccount.html" title="struct orca_tx_sender_docs::orca_tx_sender::AddressLookupTableAccount">Address<wbr>Lookup<wbr>Table<wbr>Account</a></dt><dd>The definition of address lookup table accounts.</dd><dt><a class="struct" href="struct.BuildTransactionConfig.html" title="struct orca_tx_sender_docs::orca_tx_sender::BuildTransactionConfig">Build<wbr>Transaction<wbr>Config</a></dt><dt><a class="struct" href="struct.CommitmentConfig.html" title="struct orca_tx_sender_docs::orca_tx_sender::CommitmentConfig">Commitment<wbr>Config</a></dt><dt><a class="struct" href="struct.ComputeConfig.html" title="struct orca_tx_sender_docs::orca_tx_sender::ComputeConfig">Compute<wbr>Config</a></dt><dt><a class="struct" href="struct.Duration.html" title="struct orca_tx_sender_docs::orca_tx_sender::Duration">Duration</a></dt><dd>A <code>Duration</code> type to represent a span of time, typically used for system
+timeouts.</dd><dt><a class="struct" href="struct.FeeConfig.html" title="struct orca_tx_sender_docs::orca_tx_sender::FeeConfig">FeeConfig</a></dt><dt><a class="struct" href="struct.GlobalConfig.html" title="struct orca_tx_sender_docs::orca_tx_sender::GlobalConfig">Global<wbr>Config</a></dt><dd>Global configuration for transaction sending</dd><dt><a class="struct" href="struct.Hash.html" title="struct orca_tx_sender_docs::orca_tx_sender::Hash">Hash</a></dt><dd>A hash; the 32-byte output of a hashing algorithm.</dd><dt><a class="struct" href="struct.Instant.html" title="struct orca_tx_sender_docs::orca_tx_sender::Instant">Instant</a></dt><dd>A measurement of a monotonically nondecreasing clock.
+Opaque and useful only with <a href="struct.Duration.html" title="struct orca_tx_sender_docs::orca_tx_sender::Duration"><code>Duration</code></a>.</dd><dt><a class="struct" href="struct.Instruction.html" title="struct orca_tx_sender_docs::orca_tx_sender::Instruction">Instruction</a></dt><dd>A directive for a single invocation of a Solana program.</dd><dt><a class="struct" href="struct.JitoTipData.html" title="struct orca_tx_sender_docs::orca_tx_sender::JitoTipData">Jito<wbr>TipData</a></dt><dd>Represents a single entry in the Jito tip data response</dd><dt><a class="struct" href="struct.LegacyMessage.html" title="struct orca_tx_sender_docs::orca_tx_sender::LegacyMessage">Legacy<wbr>Message</a></dt><dd>A Solana transaction message (legacy).</dd><dt><a class="struct" href="struct.Message.html" title="struct orca_tx_sender_docs::orca_tx_sender::Message">Message</a></dt><dd>A Solana transaction message (v0).</dd><dt><a class="struct" href="struct.NoopSigner.html" title="struct orca_tx_sender_docs::orca_tx_sender::NoopSigner">Noop<wbr>Signer</a></dt><dt><a class="struct" href="struct.Pubkey.html" title="struct orca_tx_sender_docs::orca_tx_sender::Pubkey">Pubkey</a></dt><dd>The address of a <a href="https://solana.com/docs/core/accounts">Solana account</a>.</dd><dt><a class="struct" href="struct.RpcConfig.html" title="struct orca_tx_sender_docs::orca_tx_sender::RpcConfig">RpcConfig</a></dt><dd>RPC configuration for connecting to Solana nodes</dd><dt><a class="struct" href="struct.RpcSendTransactionConfig.html" title="struct orca_tx_sender_docs::orca_tx_sender::RpcSendTransactionConfig">RpcSend<wbr>Transaction<wbr>Config</a></dt><dt><a class="struct" href="struct.Signature.html" title="struct orca_tx_sender_docs::orca_tx_sender::Signature">Signature</a></dt><dt><a class="struct" href="struct.Transaction.html" title="struct orca_tx_sender_docs::orca_tx_sender::Transaction">Transaction</a></dt><dd>An atomically-committed sequence of instructions.</dd><dt><a class="struct" href="struct.VersionedTransaction.html" title="struct orca_tx_sender_docs::orca_tx_sender::VersionedTransaction">Versioned<wbr>Transaction</a></dt><dd>An atomic transaction</dd></dl><h2 id="enums" class="section-header">Enums<a href="#enums" class="anchor">§</a></h2><dl class="item-table"><dt><a class="enum" href="enum.ChainId.html" title="enum orca_tx_sender_docs::orca_tx_sender::ChainId">ChainId</a></dt><dt><a class="enum" href="enum.CommitmentLevel.html" title="enum orca_tx_sender_docs::orca_tx_sender::CommitmentLevel">Commitment<wbr>Level</a></dt><dd>An attribute of a slot. It describes how finalized a block is at some point in time. For example, a slot
+is said to be at the max level immediately after the cluster recognizes the block at that slot as
+finalized. When querying the ledger state, use lower levels of commitment to report progress and higher
+levels to ensure state changes will not be rolled back.</dd><dt><a class="enum" href="enum.ComputeBudgetInstruction.html" title="enum orca_tx_sender_docs::orca_tx_sender::ComputeBudgetInstruction">Compute<wbr>Budget<wbr>Instruction</a></dt><dd>Compute Budget Instructions</dd><dt><a class="enum" href="enum.ComputeUnitLimitStrategy.html" title="enum orca_tx_sender_docs::orca_tx_sender::ComputeUnitLimitStrategy">Compute<wbr>Unit<wbr>Limit<wbr>Strategy</a></dt><dd>Compute unit limit strategy to apply when building a transaction.</dd><dt><a class="enum" href="enum.JitoFeeStrategy.html" title="enum orca_tx_sender_docs::orca_tx_sender::JitoFeeStrategy">Jito<wbr>FeeStrategy</a></dt><dt><a class="enum" href="enum.JitoPercentile.html" title="enum orca_tx_sender_docs::orca_tx_sender::JitoPercentile">Jito<wbr>Percentile</a></dt><dt><a class="enum" href="enum.Percentile.html" title="enum orca_tx_sender_docs::orca_tx_sender::Percentile">Percentile</a></dt><dt><a class="enum" href="enum.PriorityFeeStrategy.html" title="enum orca_tx_sender_docs::orca_tx_sender::PriorityFeeStrategy">Priority<wbr>FeeStrategy</a></dt><dt><a class="enum" href="enum.VersionedMessage.html" title="enum orca_tx_sender_docs::orca_tx_sender::VersionedMessage">Versioned<wbr>Message</a></dt><dd>Either a legacy message or a v0 message.</dd></dl><h2 id="traits" class="section-header">Traits<a href="#traits" class="anchor">§</a></h2><dl class="item-table"><dt><a class="trait" href="trait.Signer.html" title="trait orca_tx_sender_docs::orca_tx_sender::Signer">Signer</a></dt><dd>The <code>Signer</code> trait declares operations that all digital signature providers
+must support. It is the primary interface by which signers are specified in
+<code>Transaction</code> signing interfaces</dd></dl><h2 id="functions" class="section-header">Functions<a href="#functions" class="anchor">§</a></h2><dl class="item-table"><dt><a class="fn" href="fn.add_jito_tip_instruction.html" title="fn orca_tx_sender_docs::orca_tx_sender::add_jito_tip_instruction">add_<wbr>jito_<wbr>tip_<wbr>instruction</a></dt><dd>Calculate and return Jito tip instruction if enabled</dd><dt><a class="fn" href="fn.build_and_send_transaction.html" title="fn orca_tx_sender_docs::orca_tx_sender::build_and_send_transaction">build_<wbr>and_<wbr>send_<wbr>transaction</a></dt><dd>Build and send a transaction using the global configuration</dd><dt><a class="fn" href="fn.build_and_send_transaction_with_config.html" title="fn orca_tx_sender_docs::orca_tx_sender::build_and_send_transaction_with_config">build_<wbr>and_<wbr>send_<wbr>transaction_<wbr>with_<wbr>config</a></dt><dd>Build and send a transaction using the supplied configuration</dd><dt><a class="fn" href="fn.build_transaction.html" title="fn orca_tx_sender_docs::orca_tx_sender::build_transaction">build_<wbr>transaction</a></dt><dd>Build a transaction with compute budget and priority fees from the global configuration</dd><dt><a class="fn" href="fn.build_transaction_with_config.html" title="fn orca_tx_sender_docs::orca_tx_sender::build_transaction_with_config">build_<wbr>transaction_<wbr>with_<wbr>config</a></dt><dd>Build a transaction with compute budget and priority fees from the supplied configuration</dd><dt><a class="fn" href="fn.build_transaction_with_config_obj.html" title="fn orca_tx_sender_docs::orca_tx_sender::build_transaction_with_config_obj">build_<wbr>transaction_<wbr>with_<wbr>config_<wbr>obj</a></dt><dd>Build a transaction with compute budget and priority fees from the supplied configuration</dd><dt><a class="fn" href="fn.create_tip_instruction.html" title="fn orca_tx_sender_docs::orca_tx_sender::create_tip_instruction">create_<wbr>tip_<wbr>instruction</a></dt><dd>Create a Jito tip instruction</dd><dt><a class="fn" href="fn.estimate_compute_units.html" title="fn orca_tx_sender_docs::orca_tx_sender::estimate_compute_units">estimate_<wbr>compute_<wbr>units</a></dt><dd>Estimate compute units by simulating a transaction</dd><dt><a class="fn" href="fn.get_compute_budget_instruction.html" title="fn orca_tx_sender_docs::orca_tx_sender::get_compute_budget_instruction">get_<wbr>compute_<wbr>budget_<wbr>instruction</a></dt><dd>Calculate and return compute budget instructions for a transaction</dd><dt><a class="fn" href="fn.get_rpc_client.html" title="fn orca_tx_sender_docs::orca_tx_sender::get_rpc_client">get_<wbr>rpc_<wbr>client</a></dt><dd>Helper function to get RPC client from global config</dd><dt><a class="fn" href="fn.get_writable_accounts.html" title="fn orca_tx_sender_docs::orca_tx_sender::get_writable_accounts">get_<wbr>writable_<wbr>accounts</a></dt><dd>Get writable accounts from a list of instructions</dd><dt><a class="fn" href="fn.send_transaction.html" title="fn orca_tx_sender_docs::orca_tx_sender::send_transaction">send_<wbr>transaction</a></dt><dd>Send a transaction with retry logic using the global configuration</dd><dt><a class="fn" href="fn.send_transaction_with_config.html" title="fn orca_tx_sender_docs::orca_tx_sender::send_transaction_with_config">send_<wbr>transaction_<wbr>with_<wbr>config</a></dt><dd>Send a transaction with retry logic using the supplied configuration</dd><dt><a class="fn" href="fn.set_compute_unit_margin_multiplier.html" title="fn orca_tx_sender_docs::orca_tx_sender::set_compute_unit_margin_multiplier">set_<wbr>compute_<wbr>unit_<wbr>margin_<wbr>multiplier</a></dt><dd>Set the compute unit margin multiplier globally</dd><dt><a class="fn" href="fn.set_jito_block_engine_url.html" title="fn orca_tx_sender_docs::orca_tx_sender::set_jito_block_engine_url">set_<wbr>jito_<wbr>block_<wbr>engine_<wbr>url</a></dt><dd>Set the Jito block engine URL globally</dd><dt><a class="fn" href="fn.set_jito_fee_strategy.html" title="fn orca_tx_sender_docs::orca_tx_sender::set_jito_fee_strategy">set_<wbr>jito_<wbr>fee_<wbr>strategy</a></dt><dd>Set the Jito tip strategy globally</dd><dt><a class="fn" href="fn.set_priority_fee_strategy.html" title="fn orca_tx_sender_docs::orca_tx_sender::set_priority_fee_strategy">set_<wbr>priority_<wbr>fee_<wbr>strategy</a></dt><dd>Set the priority fee strategy globally</dd><dt><a class="fn" href="fn.set_rpc.html" title="fn orca_tx_sender_docs::orca_tx_sender::set_rpc">set_rpc</a></dt><dd>Set the RPC configuration globally</dd><dt><a class="fn" href="fn.sleep.html" title="fn orca_tx_sender_docs::orca_tx_sender::sleep">sleep</a></dt><dd>Waits until <code>duration</code> has elapsed.</dd></dl></section></div></main></body></html>
