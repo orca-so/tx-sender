@@ -12,6 +12,7 @@ ts/node_modules
 **/.yalc/
 **/yalc.lock
 dist
+docs/site/build
 artifacts
 .yarn/*
 !.yarn/patches

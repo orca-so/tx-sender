@@ -3,7 +3,6 @@ name = "orca_tx_sender"
 version = "3.0.0"
 description = "Solana Transaction Sender for building and sending transactions with priority fees"
 include = ["src/*"]
-documentation = "https://dev.orca.so/"
 homepage = "https://orca.so"
 repository = "https://github.com/orca-so/tx-sender"
 license-file = "../LICENSE"

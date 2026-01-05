@@ -5,7 +5,8 @@
   "type": "module",
   "workspaces": [
     "ts",
-    "rust"
+    "rust",
+    "docs/*"
   ],
   "scripts": {
     "build": "nx run-many --target build --all",
@@ -19,6 +20,7 @@
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.29.7",
     "@types/node": "^24.9.1",
+    "gh-pages": "^6.3.0",
     "nx": "^22.0.4",
     "rimraf": "^6.0.1",
     "tsup": "^8.4.0",
