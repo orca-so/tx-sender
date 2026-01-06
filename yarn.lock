@@ -3757,13 +3757,11 @@ __metadata:
     "@solana-program/compute-budget": "npm:^0.11.0"
     "@solana-program/system": "npm:^0.10.0"
     "@solana/kit": "npm:^5.0.0"
-    "@solana/rpc": "npm:^5.0.0"
     tsup: "npm:^8.4.0"
     typescript: "npm:^5.9.3"
     vitest: "npm:^3.2.4"
   peerDependencies:
     "@solana/kit": ^5.0.0
-    "@solana/rpc": ^5.0.0
   languageName: unknown
   linkType: soft
 
@@ -4533,7 +4531,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@solana/rpc@npm:5.1.0, @solana/rpc@npm:^5.0.0":
+"@solana/rpc@npm:5.1.0":
   version: 5.1.0
   resolution: "@solana/rpc@npm:5.1.0"
   dependencies:

@@ -1,6 +1,10 @@
-import { createSolanaRpcApi, createRpc } from "@solana/rpc";
-import type { Address, Rpc, SolanaRpcApi } from "@solana/kit";
-import { createDefaultRpcTransport, address } from "@solana/kit";
+import {
+  Address,
+  address,
+  createSolanaRpc,
+  Rpc,
+  SolanaRpcApi,
+} from "@solana/kit";
 
 /**
  * Creates an RPC client instance for interacting with the SVM blockchains using the provided RPC URL.
@@ -16,12 +20,7 @@ import { createDefaultRpcTransport, address } from "@solana/kit";
  * ```
  */
 export function rpcFromUrl(url: string): Rpc<SolanaRpcApi> {
-  const api = createSolanaRpcApi({
-    defaultCommitment: "confirmed",
-  });
-  const transport = createDefaultRpcTransport({ url });
-  const rpc = createRpc({ api, transport });
-  return rpc;
+  return createSolanaRpc(url);
 }
 
 export function normalizeAddresses(
