@@ -20,13 +20,15 @@
   "files": [
     "dist",
     "README.md",
-    "../LICENSE"
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --sourcemap",
     "test": "vitest run tests",
     "deploy": "../scripts/deploy-npm",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist LICENSE",
+    "prepack": "copyfiles -u 1 ../LICENSE .",
+    "postpack": "rimraf LICENSE"
   },
   "dependencies": {
     "@solana-program/address-lookup-table": "^0.10.0",
@@ -38,6 +40,8 @@
   },
   "devDependencies": {
     "@solana/kit": "^5.0.0",
+    "copyfiles": "^2.4.1",
+    "rimraf": "^6.1.2",
     "tsup": "^8.4.0",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"

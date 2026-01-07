@@ -8,6 +8,7 @@ node_modules
 test-ledger/
 ts/dist/
 ts/node_modules
+ts/LICENSE
 .vscode/
 **/.yalc/
 **/yalc.lock
