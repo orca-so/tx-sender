@@ -21,7 +21,7 @@
     "@docusaurus/tsconfig": "^3.9.2",
     "@orca-so/tx-sender-docs-rust": "*",
     "@orca-so/tx-sender-docs-ts": "*",
-    "rimraf": "^6.0.1"
+    "rimraf": "^6.1.2"
   },
   "browserslist": {
     "production": [
