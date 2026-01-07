@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+LOCAL_ONLY=false
+if [[ "$1" == "--local" || "$1" == "-l" ]]; then
+  LOCAL_ONLY=true
+fi
+
+echo "Building TypeScript docs..."
+cd "$ROOT_DIR/docs/ts"
+yarn build
+
+echo "Building Rust docs..."
+cd "$ROOT_DIR/docs/rust"
+yarn build
+
+echo "Building Docusaurus site..."
+cd "$ROOT_DIR/docs/site"
+yarn build
+
+if [ "$LOCAL_ONLY" = true ]; then
+  echo "Local build complete! Preview at: $ROOT_DIR/docs/site/build/index.html"
+  echo "Or run 'cd docs/site && yarn start' for dev server"
+  exit 0
+fi
+
+echo "Publishing docs to gh-pages..."
+cd "$ROOT_DIR/docs/site"
+
+: "${USE_SSH:=true}"
+# Docusaurus deploy assumes HTTPS unless USE_SSH=true; default to SSH so it can
+# reuse the repo's deploy key locally or in CI unless the caller overrides it.
+export USE_SSH
+
+# Skip the extra build since we already ran `yarn build` above.
+yarn deploy --skip-build
+
+echo "Done!"

@@ -1,0 +1,108 @@
+name: Checks
+
+on:
+  pull_request:
+    branches: "*"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "yarn"
+      - name: Enable Corepack
+        run: corepack enable && corepack prepare yarn@4.6.0 --activate
+
+      - name: Setup Rust
+        run: |
+          rustup toolchain install 1.86.0 --profile minimal
+          rustup default 1.86.0
+
+      - name: Install system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libudev-dev pkg-config
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build TypeScript
+        run: yarn workspace @orca-so/tx-sender build
+
+      - name: Build Rust
+        run: cargo build --manifest-path rust/Cargo.toml
+
+      - name: Test TypeScript
+        run: yarn workspace @orca-so/tx-sender test
+
+      - name: Test Rust
+        run: cargo test --manifest-path rust/Cargo.toml --lib
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "yarn"
+      - name: Enable Corepack
+        run: corepack enable && corepack prepare yarn@4.6.0 --activate
+
+      - name: Setup Rust
+        run: |
+          rustup toolchain install 1.86.0 --profile minimal
+          rustup default 1.86.0
+          rustup component add clippy rustfmt
+
+      - name: Install system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libudev-dev pkg-config
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build TypeScript (required for lint)
+        run: yarn workspace @orca-so/tx-sender build
+
+      - name: Lint Rust
+        run: |
+          cargo clippy --manifest-path rust/Cargo.toml
+          cargo fmt --check --manifest-path rust/Cargo.toml
+
+  changeset:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "yarn"
+      - name: Enable Corepack
+        run: corepack enable && corepack prepare yarn@4.6.0 --activate
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Check changesets
+        run: yarn changeset status --since origin/main

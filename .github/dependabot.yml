@@ -1,0 +1,72 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels: []
+    groups:
+      solana-core:
+        applies-to: version-updates
+        patterns:
+          - "@solana/*"
+      solana-programs:
+        applies-to: version-updates
+        patterns:
+          - "@solana-program/*"
+      typescript-types:
+        applies-to: version-updates
+        dependency-type: "development"
+        patterns:
+          - "@types/*"
+          - "typescript"
+      build-tools:
+        applies-to: version-updates
+        dependency-type: "development"
+        patterns:
+          - "tsup"
+          - "rimraf"
+      testing-tools:
+        applies-to: version-updates
+        dependency-type: "development"
+        patterns:
+          - "@vitest/*"
+          - "vitest"
+      monorepo-tools:
+        applies-to: version-updates
+        dependency-type: "development"
+        patterns:
+          - "@nx/*"
+          - "nx"
+      release-tools:
+        applies-to: version-updates
+        dependency-type: "development"
+        patterns:
+          - "@changesets/*"
+
+  - package-ecosystem: "cargo"
+    directory: "/rust"
+    schedule:
+      interval: "daily"
+    labels: []
+    groups:
+      solana-sdk:
+        applies-to: version-updates
+        patterns:
+          - "solana-*"
+          - "spl-*"
+      serialization:
+        applies-to: version-updates
+        patterns:
+          - "serde*"
+      async-runtime:
+        applies-to: version-updates
+        patterns:
+          - "tokio*"
+          - "reqwest*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels: []

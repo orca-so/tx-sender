@@ -1,0 +1,10 @@
+{
+  "entryPoints": [
+    "../../ts"
+  ],
+  "entryPointStrategy": "packages",
+  "githubPages": true,
+  "skipErrorChecking": true,
+  "out": "dist/ts",
+  "readme": "../../ts/README.md"
+}

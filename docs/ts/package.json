@@ -1,0 +1,17 @@
+{
+  "name": "@orca-so/tx-sender-docs-ts",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "typedoc",
+    "start": "typedoc && open dist/ts/index.html",
+    "deploy": "echo 'Docs deployed via site package'",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "@orca-so/tx-sender": "*",
+    "typedoc": "^0.28.1",
+    "typedoc-plugin-merge-modules": "^7.0.0",
+    "typescript": "^5.9.3"
+  }
+}

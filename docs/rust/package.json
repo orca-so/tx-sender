@@ -1,0 +1,14 @@
+{
+  "name": "@orca-so/tx-sender-docs-rust",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "cd ../../rust && cargo doc --lib --no-deps && mkdir -p ../docs/rust/dist/rust && cp -rf target/doc/* ../docs/rust/dist/rust/",
+    "start": "cd ../../rust && cargo doc --lib --no-deps --open",
+    "deploy": "echo 'Docs deployed via site package'",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "rimraf": "^6.1.2"
+  }
+}
