@@ -3739,7 +3739,7 @@ __metadata:
   dependencies:
     "@changesets/changelog-github": "npm:^0.5.1"
     "@changesets/cli": "npm:^2.29.7"
-    "@types/node": "npm:^24.9.1"
+    "@types/node": "npm:^25.0.3"
     gh-pages: "npm:^6.3.0"
     nx: "npm:^22.0.4"
     rimraf: "npm:^6.1.2"
@@ -5116,7 +5116,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
+"@types/node@npm:*, @types/node@npm:^25.0.3":
   version: 25.0.3
   resolution: "@types/node@npm:25.0.3"
   dependencies:
@@ -5136,15 +5136,6 @@ __metadata:
   version: 17.0.45
   resolution: "@types/node@npm:17.0.45"
   checksum: 10c0/0db377133d709b33a47892581a21a41cd7958f22723a3cc6c71d55ac018121382de42fbfc7970d5ae3e7819dbe5f40e1c6a5174aedf7e7964e9cb8fa72b580b0
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^24.9.1":
-  version: 24.10.4
-  resolution: "@types/node@npm:24.10.4"
-  dependencies:
-    undici-types: "npm:~7.16.0"
-  checksum: 10c0/069639cb7233ee747df1897b5e784f6b6c5da765c96c94773c580aac888fa1a585048d2a6e95eb8302d89c7a9df75801c8b5a0b7d0221d4249059cf09a5f4228
   languageName: node
   linkType: hard
 
