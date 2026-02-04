@@ -22,10 +22,10 @@ solana-commitment-config = { version = "^3" }
 solana-address-lookup-table-interface = { version = "^3", features = ["bincode", "bytemuck"] }
 solana-compute-budget-interface = { version = "^3" }
 solana-rpc-client-api = { version = "^3" }
-solana-pubkey = { version = "^3" }
-solana-hash = { version = "^3" }
+solana-pubkey = { version = "^4" }
+solana-hash = { version = "^4" }
 solana-signer = { version = "^3" }
-solana-system-interface = "^2"
+solana-system-interface = "^3"
 reqwest = { version = "0.11.27", features = ["json", "stream"] }
 tokio = { version = "1.37.0", features = ["full"] }
 serde = { version = "1.0.202", features = ["derive"] }
