@@ -34,7 +34,7 @@ jobs:
       - name: Enable Corepack
         run: |
           corepack enable
-          corepack prepare yarn@4.6.0 --activate
+          corepack prepare yarn@4.13.0 --activate
 
       - name: Setup Rust
         run: |

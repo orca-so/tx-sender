@@ -29,7 +29,7 @@ This monorepo contains two packages:
 ### Prerequisites
 
 - Node.js 22+
-- Yarn 4.6.0+
+- Yarn 4.13.0+
 - Rust 1.86.0+
 
 ### Setup
