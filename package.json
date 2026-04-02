@@ -1,7 +1,7 @@
 {
   "name": "@orca-so/tx-sender-monorepo",
   "private": true,
-  "packageManager": "yarn@4.6.0",
+  "packageManager": "yarn@4.13.0",
   "type": "module",
   "workspaces": [
     "ts",
