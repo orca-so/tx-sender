@@ -9,6 +9,6 @@
     "clean": "rimraf dist"
   },
   "devDependencies": {
-    "rimraf": "^6.1.2"
+    "rimraf": "^6.1.3"
   }
 }
