@@ -1,5 +1,11 @@
 # @orca-so/rust-tx-sender
 
+## 3.0.1
+
+### Patch Changes
+
+- [#26](https://github.com/orca-so/tx-sender/pull/26) [`03a8309`](https://github.com/orca-so/tx-sender/commit/03a8309e714c335b96ae55aeaa55d283e4a35140) Thanks [@defnotzed](https://github.com/defnotzed)! - Expose simulation logs in transaction simulation failure errors.
+
 ## 3.0.0
 
 ### Major Changes

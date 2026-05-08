@@ -1,5 +1,13 @@
 # @orca-so/tx-sender
 
+## 3.0.1
+
+### Patch Changes
+
+- [#26](https://github.com/orca-so/tx-sender/pull/26) [`03a8309`](https://github.com/orca-so/tx-sender/commit/03a8309e714c335b96ae55aeaa55d283e4a35140) Thanks [@defnotzed](https://github.com/defnotzed)! - Expose simulation logs in transaction simulation failure errors.
+
+- [#1](https://github.com/orca-so/tx-sender/pull/1) [`61a5273`](https://github.com/orca-so/tx-sender/commit/61a52730b37c3ea7a1c3ee7e352718ca0d6718e7) Thanks [@jshiohaha](https://github.com/jshiohaha)! - add tx-sender specific docs, fix LICENSE handling in ts library publish flow
+
 ## 3.0.0
 
 ### Major Changes
@@ -15,16 +23,19 @@
 - [#1076](https://github.com/orca-so/whirlpools/pull/1076) [`743e758`](https://github.com/orca-so/whirlpools/commit/743e758740622475691866ca34d571799880fdd3) Thanks [@boosik-sol](https://github.com/boosik-sol)! - Improve browser wallet compatibility and add configurable transaction sending strategy
 
   **Browser Wallet Support:**
+
   - `buildTransaction` now accepts `KeyPairSigner | NoopSigner` and automatically detects signer type
   - Performs partial signing for NoopSigner (browser wallets), full signing for KeyPairSigner (Node.js)
   - `sendTransaction` now accepts `(FullySignedTransaction | Transaction) & TransactionWithLifetime` to support both workflows
 
   **Configurable RPC Usage:**
+
   - Added `pollIntervalMs` (default: 0) and `resendOnPoll` (default: true) options to `setRpc()`
   - Allows control over confirmation polling frequency and transaction resending behavior
   - Default settings optimized for premium RPCs; public RPC users can configure conservative settings
 
   **Breaking Changes:**
+
   - `buildTransaction` no longer accepts `Address` string parameter. Must pass `KeyPairSigner | NoopSigner` instance to ensure same object is used for both instruction building and transaction building (required by Solana's `@solana/kit` identity checks).
 
   **Migration:**
@@ -40,7 +51,7 @@
     params,
     pool,
     100,
-    noopSigner,
+    noopSigner
   );
   await buildTransaction(instructions, noopSigner);
   ```
