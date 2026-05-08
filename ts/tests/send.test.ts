@@ -86,9 +86,21 @@ describe("Send Transaction", async () => {
     );
     await expect(
       buildAndSendTransaction([transferInstruction], signer),
-    ).rejects.toThrow(
-      'Transaction simulation failed: {"InstructionError":[0,{"Custom":1}]}',
+    ).rejects.toThrow('Transaction simulation failed: {"InstructionError":[0,{"Custom":1}]}');
+  });
+
+  it("Should include simulation logs in transaction simulation errors", async () => {
+    const errorMockRpc = createErrorMockRpc([
+      "Program Foo invoke [1]",
+      "Program log: failed here",
+    ]);
+    vi.spyOn(compatibility, "rpcFromUrl").mockReturnValue(
+      errorMockRpc as unknown as Rpc<SolanaRpcApi>,
     );
+
+    await expect(
+      buildAndSendTransaction([transferInstruction], signer),
+    ).rejects.toThrow("Simulation logs:\nProgram Foo invoke [1]\nProgram log: failed here");
   });
 
   it("Should reject invalid transaction", async () => {

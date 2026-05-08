@@ -79,13 +79,14 @@ export function setupMockRpc(customMethods?: Partial<typeof mockRpcMethods>) {
 /**
  * Creates a mock RPC with error responses for testing error handling
  */
-export function createErrorMockRpc() {
+export function createErrorMockRpc(logs?: string[]) {
   return {
     ...mockRpcMethods,
     simulateTransaction: vi.fn().mockReturnValue({
       send: vi.fn().mockResolvedValue({
         value: {
           err: { InstructionError: [0, { Custom: 1 }] },
+          logs,
         },
       }),
     }),

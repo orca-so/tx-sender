@@ -256,7 +256,10 @@ pub async fn send_transaction_with_config(
         .map_err(|e| format!("Transaction simulation failed: {}", e))?;
 
     if let Some(err) = sim_result.value.err {
-        return Err(format!("Transaction simulation failed: {}", err));
+        return Err(compute_budget::format_simulation_error(
+            err,
+            sim_result.value.logs,
+        ));
     }
 
     let commitment_level = commitment.unwrap_or(CommitmentLevel::Confirmed);
@@ -357,5 +360,20 @@ mod tests {
         let config = FeeConfig::default();
         assert_eq!(config.compute_unit_margin_multiplier, 1.1);
         assert_eq!(config.jito_block_engine_url, "https://bundles.jito.wtf");
+    }
+
+    #[test]
+    fn test_format_simulation_error_includes_logs() {
+        let err = compute_budget::format_simulation_error(
+            "InstructionError",
+            Some(vec![
+                "Program Foo invoke [1]".to_string(),
+                "Program log: failed here".to_string(),
+            ]),
+        );
+
+        assert!(err.contains("Transaction simulation failed: InstructionError"));
+        assert!(err.contains("Simulation logs:"));
+        assert!(err.contains("Program log: failed here"));
     }
 }
