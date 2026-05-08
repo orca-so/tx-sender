@@ -91,10 +91,7 @@ export async function sendTransaction(
 
   if (simResult.value.err) {
     throw new Error(
-      `Transaction simulation failed: ${JSON.stringify(
-        simResult.value.err,
-        (key, value) => (typeof value === "bigint" ? value.toString() : value),
-      )}`,
+      formatSimulationError(simResult.value.err, simResult.value.logs),
     );
   }
 
@@ -158,4 +155,20 @@ function getTxHash(transaction: Transaction & FullySignedTransaction) {
   const [signature] = Object.values(transaction.signatures);
   const txHash = getBase58Decoder().decode(signature!) as Signature;
   return txHash;
+}
+
+function formatSimulationError(
+  err: unknown,
+  logs?: readonly string[] | null,
+) {
+  const serializedErr = JSON.stringify(err, (_key, value) =>
+    typeof value === "bigint" ? value.toString() : value,
+  );
+  let message = `Transaction simulation failed: ${serializedErr}`;
+
+  if (logs?.length) {
+    message += `\nSimulation logs:\n${logs.join("\n")}`;
+  }
+
+  return message;
 }

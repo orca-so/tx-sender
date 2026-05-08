@@ -26,6 +26,22 @@ pub struct ComputeConfig {
     pub unit_limit: ComputeUnitLimitStrategy,
 }
 
+pub(crate) fn format_simulation_error(
+    err: impl std::fmt::Display,
+    logs: Option<Vec<String>>,
+) -> String {
+    let mut message = format!("Transaction simulation failed: {}", err);
+
+    if let Some(logs) = logs {
+        if !logs.is_empty() {
+            message.push_str("\nSimulation logs:\n");
+            message.push_str(&logs.join("\n"));
+        }
+    }
+
+    message
+}
+
 /// Estimate compute units by simulating a transaction
 pub async fn estimate_compute_units(
     rpc_client: &RpcClient,
@@ -69,7 +85,7 @@ pub async fn estimate_compute_units(
     match result {
         Ok(simulation_result) => {
             if let Some(err) = simulation_result.value.err {
-                return Err(format!("Transaction simulation failed: {}", err));
+                return Err(format_simulation_error(err, simulation_result.value.logs));
             }
             match simulation_result.value.units_consumed {
                 Some(units) => Ok(units as u32),
