@@ -3753,9 +3753,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@orca-so/tx-sender@workspace:ts"
   dependencies:
-    "@solana-program/address-lookup-table": "npm:^0.10.0"
-    "@solana-program/compute-budget": "npm:^0.11.0"
-    "@solana-program/system": "npm:^0.10.0"
+    "@solana-program/address-lookup-table": "npm:^0.11.0"
+    "@solana-program/compute-budget": "npm:^0.15.0"
+    "@solana-program/system": "npm:^0.12.0"
     "@solana/kit": "npm:^5.0.0"
     copyfiles: "npm:^2.4.1"
     rimraf: "npm:^6.1.2"
@@ -4062,30 +4062,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@solana-program/address-lookup-table@npm:^0.10.0":
-  version: 0.10.0
-  resolution: "@solana-program/address-lookup-table@npm:0.10.0"
-  peerDependencies:
-    "@solana/kit": ^5.0
-  checksum: 10c0/f984bbd1e55e8a4be8f88332c64bd40b6a408eda9abc4f35634b3658e91ed5d4e22c521ad2a04a6d2f32fcb4add9ccd6519904b633c616012f42cb1fe2999344
-  languageName: node
-  linkType: hard
-
-"@solana-program/compute-budget@npm:^0.11.0":
+"@solana-program/address-lookup-table@npm:^0.11.0":
   version: 0.11.0
-  resolution: "@solana-program/compute-budget@npm:0.11.0"
+  resolution: "@solana-program/address-lookup-table@npm:0.11.0"
   peerDependencies:
-    "@solana/kit": ^5.0
-  checksum: 10c0/6d677fa0d48e51fe99f54833e61fee75b3acd75f556d5c06bf39b12bba4c782f3c69aa567939b0184a994794faac548c7c56b1c97a989bde31bbb3c130b4be05
+    "@solana/kit": ^6.0
+  checksum: 10c0/28271e452a9e6caa1cb5ad0365cf7f4a193920fd3fd3f5261fa655fb84e7b6a3d911e602125ad5718cdb4a8d6980e09d54f9f97016423b9d13051c3dde332cac
   languageName: node
   linkType: hard
 
-"@solana-program/system@npm:^0.10.0":
-  version: 0.10.0
-  resolution: "@solana-program/system@npm:0.10.0"
+"@solana-program/compute-budget@npm:^0.15.0":
+  version: 0.15.0
+  resolution: "@solana-program/compute-budget@npm:0.15.0"
   peerDependencies:
-    "@solana/kit": ^5.0
-  checksum: 10c0/4cc3164d49fe7b10e9c0c89493f738e2d4294e2eae40fafee56b01dfb50b939c88f82eb06d5393333743b0edee961b03e947afcc20e6965252576900266ec52e
+    "@solana/kit": ^6.3.0
+  checksum: 10c0/b2c29063932dee2f5da77d63ab7db95834a0c6fc6ff79f99951093accebdd942d14a6db5bd97412a0e8b58f8b4e0ed20c084e60389ce6751da39afdd651a9d2b
+  languageName: node
+  linkType: hard
+
+"@solana-program/system@npm:^0.12.0":
+  version: 0.12.0
+  resolution: "@solana-program/system@npm:0.12.0"
+  peerDependencies:
+    "@solana/kit": ^6.1.0
+  checksum: 10c0/b0bffa67349998f420a05e43aad17df0dc98dd47fa223ecae6fa69b59350b21604e8a0f4bd3e7fe19d36b0512a0871e7df80addca4102fb2b4fce858aae1a8db
   languageName: node
   linkType: hard
 
