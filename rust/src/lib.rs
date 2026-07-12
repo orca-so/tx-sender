@@ -104,11 +104,59 @@ pub struct BuildTransactionConfig {
 /// 3. Adding any Jito tip instructions
 /// 4. Supporting address lookup tables for account compression
 pub async fn build_transaction_with_config_obj(
+    instructions: Vec<Instruction>,
+    payer: &Pubkey,
+    address_lookup_tables: Option<Vec<AddressLookupTableAccount>>,
+    rpc_client: &RpcClient,
+    config: &BuildTransactionConfig,
+) -> Result<VersionedTransaction, String> {
+    build_transaction_at_commitment(
+        instructions,
+        payer,
+        address_lookup_tables,
+        rpc_client,
+        config,
+        None,
+        None,
+    )
+    .await
+}
+
+/// Like [`build_transaction_with_config_obj`], but the Dynamic compute-unit
+/// simulation runs at the rpc client's configured commitment rather than the
+/// solana default of finalized. When provided, `min_context_slot` requires
+/// the simulation bank to be at least that recent. Use this when the
+/// transaction references recently changed state, such as freshly extended
+/// address lookup tables fetched at a known context slot.
+pub async fn build_transaction_with_config_obj_at_context(
+    instructions: Vec<Instruction>,
+    payer: &Pubkey,
+    address_lookup_tables: Option<Vec<AddressLookupTableAccount>>,
+    rpc_client: &RpcClient,
+    config: &BuildTransactionConfig,
+    min_context_slot: Option<u64>,
+) -> Result<VersionedTransaction, String> {
+    build_transaction_at_commitment(
+        instructions,
+        payer,
+        address_lookup_tables,
+        rpc_client,
+        config,
+        Some(rpc_client.commitment()),
+        min_context_slot,
+    )
+    .await
+}
+
+#[allow(clippy::too_many_arguments)]
+async fn build_transaction_at_commitment(
     mut instructions: Vec<Instruction>,
     payer: &Pubkey,
     address_lookup_tables: Option<Vec<AddressLookupTableAccount>>,
     rpc_client: &RpcClient,
     config: &BuildTransactionConfig,
+    simulation_commitment: Option<solana_commitment_config::CommitmentConfig>,
+    min_context_slot: Option<u64>,
 ) -> Result<VersionedTransaction, String> {
     let recent_blockhash = rpc_client
         .get_latest_blockhash()
@@ -121,11 +169,13 @@ pub async fn build_transaction_with_config_obj(
 
     let compute_units = match config.compute_config.unit_limit {
         ComputeUnitLimitStrategy::Dynamic => {
-            compute_budget::estimate_compute_units(
+            compute_budget::estimate_compute_units_at_context(
                 rpc_client,
                 &instructions,
                 payer,
                 address_lookup_tables_clone,
+                simulation_commitment,
+                min_context_slot,
             )
             .await?
         }

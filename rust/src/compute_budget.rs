@@ -49,6 +49,17 @@ pub async fn estimate_compute_units(
     payer: &Pubkey,
     alts: Option<Vec<AddressLookupTableAccount>>,
 ) -> Result<u32, String> {
+    estimate_compute_units_at_context(rpc_client, instructions, payer, alts, None, None).await
+}
+
+pub(crate) async fn estimate_compute_units_at_context(
+    rpc_client: &RpcClient,
+    instructions: &[Instruction],
+    payer: &Pubkey,
+    alts: Option<Vec<AddressLookupTableAccount>>,
+    commitment: Option<solana_commitment_config::CommitmentConfig>,
+    min_context_slot: Option<u64>,
+) -> Result<u32, String> {
     let alt_accounts = alts.unwrap_or_default();
     let blockhash = rpc_client
         .get_latest_blockhash()
@@ -77,6 +88,8 @@ pub async fn estimate_compute_units(
             RpcSimulateTransactionConfig {
                 sig_verify: false,
                 replace_recent_blockhash: true,
+                commitment,
+                min_context_slot,
                 ..Default::default()
             },
         )
