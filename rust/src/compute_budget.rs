@@ -49,10 +49,10 @@ pub async fn estimate_compute_units(
     payer: &Pubkey,
     alts: Option<Vec<AddressLookupTableAccount>>,
 ) -> Result<u32, String> {
-    estimate_compute_units_at_context(rpc_client, instructions, payer, alts, None, None).await
+    estimate_compute_units_at_commitment(rpc_client, instructions, payer, alts, None, None).await
 }
 
-pub(crate) async fn estimate_compute_units_at_context(
+pub(crate) async fn estimate_compute_units_at_commitment(
     rpc_client: &RpcClient,
     instructions: &[Instruction],
     payer: &Pubkey,

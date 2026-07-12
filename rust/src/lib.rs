@@ -169,7 +169,7 @@ async fn build_transaction_at_commitment(
 
     let compute_units = match config.compute_config.unit_limit {
         ComputeUnitLimitStrategy::Dynamic => {
-            compute_budget::estimate_compute_units_at_context(
+            compute_budget::estimate_compute_units_at_commitment(
                 rpc_client,
                 &instructions,
                 payer,
