@@ -40,7 +40,12 @@ impl From<Hash> for ChainId {
     }
 }
 
-/// RPC configuration for connecting to Solana nodes
+/// RPC configuration for connecting to Solana nodes.
+///
+/// Start with [`RpcConfig::default`] and use the `with_*` methods to override
+/// individual settings, or use [`RpcConfig::new`] to detect the chain from an
+/// RPC endpoint.
+#[non_exhaustive]
 #[derive(Debug, Default, Clone, PartialEq)]
 pub struct RpcConfig {
     pub url: String,
@@ -49,6 +54,26 @@ pub struct RpcConfig {
 }
 
 impl RpcConfig {
+    /// Set the RPC URL without contacting the endpoint or detecting its chain.
+    /// Prefer [`RpcConfig::new`] when the chain id is not already known.
+    pub fn with_url(mut self, url: impl Into<String>) -> Self {
+        self.url = url.into();
+        self
+    }
+
+    pub fn with_priority_fee_percentile_support(
+        mut self,
+        supports_priority_fee_percentile: bool,
+    ) -> Self {
+        self.supports_priority_fee_percentile = supports_priority_fee_percentile;
+        self
+    }
+
+    pub fn with_chain_id(mut self, chain_id: ChainId) -> Self {
+        self.chain_id = Some(chain_id);
+        self
+    }
+
     pub async fn new(url: impl Into<String>) -> Result<Self, String> {
         let url = url.into();
         let client = RpcClient::new(url.clone());
@@ -73,5 +98,22 @@ impl RpcConfig {
         self.chain_id
             .as_ref()
             .is_some_and(|chain_id| chain_id.is_mainnet())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn builder_sets_rpc_configuration() {
+        let config = RpcConfig::default()
+            .with_url("https://example.com")
+            .with_priority_fee_percentile_support(true)
+            .with_chain_id(ChainId::Mainnet);
+
+        assert_eq!(config.url, "https://example.com");
+        assert!(config.supports_priority_fee_percentile);
+        assert_eq!(config.chain_id, Some(ChainId::Mainnet));
     }
 }

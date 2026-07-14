@@ -89,11 +89,54 @@ pub async fn build_and_send_transaction<S: Signer>(
     .await
 }
 
+/// Configuration for building a transaction.
+///
+/// Start with [`BuildTransactionConfig::default`] and use the `with_*`
+/// methods to override individual settings. The struct is non-exhaustive so
+/// future build options can be added without another breaking release.
+///
+/// ```
+/// use orca_tx_sender::BuildTransactionConfig;
+///
+/// let config = BuildTransactionConfig::default().with_min_context_slot(123);
+/// assert_eq!(config.min_context_slot, Some(123));
+/// ```
+#[non_exhaustive]
 #[derive(Debug, Default)]
 pub struct BuildTransactionConfig {
     pub rpc_config: RpcConfig,
     pub fee_config: FeeConfig,
     pub compute_config: ComputeConfig,
+    /// Minimum bank slot to use for dynamic compute-unit simulation.
+    ///
+    /// Use the context slot returned when fetching recently changed state,
+    /// such as an address lookup table, so simulation cannot run against an
+    /// older bank that does not contain that state yet.
+    pub min_context_slot: Option<u64>,
+}
+
+impl BuildTransactionConfig {
+    pub fn with_rpc_config(mut self, rpc_config: RpcConfig) -> Self {
+        self.rpc_config = rpc_config;
+        self
+    }
+
+    pub fn with_fee_config(mut self, fee_config: FeeConfig) -> Self {
+        self.fee_config = fee_config;
+        self
+    }
+
+    pub fn with_compute_config(mut self, compute_config: ComputeConfig) -> Self {
+        self.compute_config = compute_config;
+        self
+    }
+
+    /// Require dynamic compute-unit simulation to use a bank at least as
+    /// recent as `min_context_slot`.
+    pub fn with_min_context_slot(mut self, min_context_slot: u64) -> Self {
+        self.min_context_slot = Some(min_context_slot);
+        self
+    }
 }
 
 /// Build a transaction with compute budget and priority fees from the supplied configuration
@@ -104,59 +147,11 @@ pub struct BuildTransactionConfig {
 /// 3. Adding any Jito tip instructions
 /// 4. Supporting address lookup tables for account compression
 pub async fn build_transaction_with_config_obj(
-    instructions: Vec<Instruction>,
-    payer: &Pubkey,
-    address_lookup_tables: Option<Vec<AddressLookupTableAccount>>,
-    rpc_client: &RpcClient,
-    config: &BuildTransactionConfig,
-) -> Result<VersionedTransaction, String> {
-    build_transaction_at_commitment(
-        instructions,
-        payer,
-        address_lookup_tables,
-        rpc_client,
-        config,
-        None,
-        None,
-    )
-    .await
-}
-
-/// Like [`build_transaction_with_config_obj`], but the Dynamic compute-unit
-/// simulation runs at the rpc client's configured commitment rather than the
-/// solana default of finalized. When provided, `min_context_slot` requires
-/// the simulation bank to be at least that recent. Use this when the
-/// transaction references recently changed state, such as freshly extended
-/// address lookup tables fetched at a known context slot.
-pub async fn build_transaction_with_config_obj_at_context(
-    instructions: Vec<Instruction>,
-    payer: &Pubkey,
-    address_lookup_tables: Option<Vec<AddressLookupTableAccount>>,
-    rpc_client: &RpcClient,
-    config: &BuildTransactionConfig,
-    min_context_slot: Option<u64>,
-) -> Result<VersionedTransaction, String> {
-    build_transaction_at_commitment(
-        instructions,
-        payer,
-        address_lookup_tables,
-        rpc_client,
-        config,
-        Some(rpc_client.commitment()),
-        min_context_slot,
-    )
-    .await
-}
-
-#[allow(clippy::too_many_arguments)]
-async fn build_transaction_at_commitment(
     mut instructions: Vec<Instruction>,
     payer: &Pubkey,
     address_lookup_tables: Option<Vec<AddressLookupTableAccount>>,
     rpc_client: &RpcClient,
     config: &BuildTransactionConfig,
-    simulation_commitment: Option<solana_commitment_config::CommitmentConfig>,
-    min_context_slot: Option<u64>,
 ) -> Result<VersionedTransaction, String> {
     let recent_blockhash = rpc_client
         .get_latest_blockhash()
@@ -174,8 +169,8 @@ async fn build_transaction_at_commitment(
                 &instructions,
                 payer,
                 address_lookup_tables_clone,
-                simulation_commitment,
-                min_context_slot,
+                Some(rpc_client.commitment()),
+                config.min_context_slot,
             )
             .await?
         }
@@ -248,11 +243,9 @@ pub async fn build_transaction_with_config(
         payer,
         address_lookup_tables,
         rpc_client,
-        &BuildTransactionConfig {
-            rpc_config: (*rpc_config).clone(),
-            fee_config: (*fee_config).clone(),
-            ..Default::default()
-        },
+        &BuildTransactionConfig::default()
+            .with_rpc_config((*rpc_config).clone())
+            .with_fee_config((*fee_config).clone()),
     )
     .await
 }
@@ -410,6 +403,18 @@ mod tests {
         let config = FeeConfig::default();
         assert_eq!(config.compute_unit_margin_multiplier, 1.1);
         assert_eq!(config.jito_block_engine_url, "https://bundles.jito.wtf");
+    }
+
+    #[test]
+    fn test_build_transaction_config_has_no_minimum_context_slot_by_default() {
+        let config = BuildTransactionConfig::default();
+        assert_eq!(config.min_context_slot, None);
+    }
+
+    #[test]
+    fn test_build_transaction_config_builder_sets_minimum_context_slot() {
+        let config = BuildTransactionConfig::default().with_min_context_slot(123);
+        assert_eq!(config.min_context_slot, Some(123));
     }
 
     #[test]
