@@ -21,9 +21,21 @@ pub enum ComputeUnitLimitStrategy {
     Exact(u32),
 }
 
+/// Compute-unit limit settings used while building a transaction.
+///
+/// Start with [`ComputeConfig::default`] and use [`ComputeConfig::with_unit_limit`]
+/// to override the default dynamic strategy.
+#[non_exhaustive]
 #[derive(Debug, Default)]
 pub struct ComputeConfig {
     pub unit_limit: ComputeUnitLimitStrategy,
+}
+
+impl ComputeConfig {
+    pub fn with_unit_limit(mut self, unit_limit: ComputeUnitLimitStrategy) -> Self {
+        self.unit_limit = unit_limit;
+        self
+    }
 }
 
 pub(crate) fn format_simulation_error(
@@ -48,6 +60,30 @@ pub async fn estimate_compute_units(
     instructions: &[Instruction],
     payer: &Pubkey,
     alts: Option<Vec<AddressLookupTableAccount>>,
+) -> Result<u32, String> {
+    estimate_compute_units_at_commitment(rpc_client, instructions, payer, alts, None, None).await
+}
+
+fn simulation_config(
+    commitment: Option<solana_commitment_config::CommitmentConfig>,
+    min_context_slot: Option<u64>,
+) -> RpcSimulateTransactionConfig {
+    RpcSimulateTransactionConfig {
+        sig_verify: false,
+        replace_recent_blockhash: true,
+        commitment,
+        min_context_slot,
+        ..Default::default()
+    }
+}
+
+pub(crate) async fn estimate_compute_units_at_commitment(
+    rpc_client: &RpcClient,
+    instructions: &[Instruction],
+    payer: &Pubkey,
+    alts: Option<Vec<AddressLookupTableAccount>>,
+    commitment: Option<solana_commitment_config::CommitmentConfig>,
+    min_context_slot: Option<u64>,
 ) -> Result<u32, String> {
     let alt_accounts = alts.unwrap_or_default();
     let blockhash = rpc_client
@@ -74,11 +110,7 @@ pub async fn estimate_compute_units(
     let result = rpc_client
         .simulate_transaction_with_config(
             &transaction,
-            RpcSimulateTransactionConfig {
-                sig_verify: false,
-                replace_recent_blockhash: true,
-                ..Default::default()
-            },
+            simulation_config(commitment, min_context_slot),
         )
         .await;
 
@@ -237,4 +269,29 @@ pub fn get_writable_accounts(instructions: &[Instruction]) -> Vec<Pubkey> {
     }
 
     writable.into_iter().collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use solana_commitment_config::CommitmentConfig;
+
+    #[test]
+    fn simulation_config_preserves_commitment_and_min_context_slot() {
+        let config = simulation_config(Some(CommitmentConfig::confirmed()), Some(123));
+
+        assert_eq!(config.commitment, Some(CommitmentConfig::confirmed()));
+        assert_eq!(config.min_context_slot, Some(123));
+        assert!(!config.sig_verify);
+        assert!(config.replace_recent_blockhash);
+    }
+
+    #[test]
+    fn builder_sets_compute_unit_limit() {
+        let config = ComputeConfig::default().with_unit_limit(ComputeUnitLimitStrategy::Exact(321));
+        assert!(matches!(
+            config.unit_limit,
+            ComputeUnitLimitStrategy::Exact(321)
+        ));
+    }
 }

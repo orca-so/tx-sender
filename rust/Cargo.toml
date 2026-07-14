@@ -19,7 +19,10 @@ solana-instruction = { version = "^3" }
 solana-signature = { version = "^3" }
 solana-keypair = { version = "^3" }
 solana-commitment-config = { version = "^3" }
-solana-address-lookup-table-interface = { version = "^3", features = ["bincode", "bytemuck"] }
+solana-address-lookup-table-interface = { version = "^3", features = [
+    "bincode",
+    "bytemuck",
+] }
 solana-compute-budget-interface = { version = "^3" }
 solana-rpc-client-api = { version = "^3" }
 solana-pubkey = { version = "^3" }
@@ -43,4 +46,3 @@ test = false
 name = "with_jito_test"
 path = "examples/with_jito_test.rs"
 test = false
-
