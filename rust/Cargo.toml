@@ -1,6 +1,6 @@
 [package]
 name = "orca_tx_sender"
-version = "3.0.1"
+version = "4.0.0"
 description = "Solana Transaction Sender for building and sending transactions with priority fees"
 include = ["src/*"]
 homepage = "https://orca.so"
