@@ -67,10 +67,6 @@ jobs:
             echo "has_changesets=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Build packages
-        if: steps.changesets.outputs.has_changesets == 'true'
-        run: yarn build
-
       - name: Determine New Versions
         if: steps.changesets.outputs.has_changesets == 'true'
         run: yarn changeset version
@@ -80,6 +76,10 @@ jobs:
       - name: Sync Cargo Versions
         if: steps.changesets.outputs.has_changesets == 'true'
         uses: ./.github/actions/sync
+
+      - name: Build packages
+        if: steps.changesets.outputs.has_changesets == 'true'
+        run: yarn build
 
       - name: Git Commit
         if: steps.changesets.outputs.has_changesets == 'true'
