@@ -13,12 +13,31 @@ use solana_transaction::versioned::VersionedTransaction;
 /// Compute unit limit strategy to apply when building a transaction.
 /// - Dynamic: Estimate compute units by simulating the transaction.
 ///            If the simulation fails, the transaction will not build.
-/// - Exact: Directly use the provided compute unit limit.
+/// - Exact: Directly use the provided compute unit limit up to 1,400,000
 #[derive(Debug, Default)]
 pub enum ComputeUnitLimitStrategy {
     #[default]
     Dynamic,
     Exact(u32),
+}
+
+pub const MAX_COMPUTE_UNIT_LIMIT: u32 = 1_400_000;
+
+pub(crate) fn apply_compute_unit_margin(compute_units: u32, multiplier: f64) -> u32 {
+    ((compute_units as f64 * multiplier) as u32).min(MAX_COMPUTE_UNIT_LIMIT)
+}
+
+pub(crate) fn validate_compute_unit_limit_strategy(
+    strategy: &ComputeUnitLimitStrategy,
+) -> Result<(), String> {
+    if let ComputeUnitLimitStrategy::Exact(units) = strategy {
+        if !(1..=MAX_COMPUTE_UNIT_LIMIT).contains(units) {
+            return Err(format!(
+                "Exact compute unit limit must be between 1 and 1,400,000; received {units}"
+            ));
+        }
+    }
+    Ok(())
 }
 
 /// Compute-unit limit settings used while building a transaction.
@@ -128,6 +147,52 @@ pub(crate) async fn estimate_compute_units_at_commitment(
     }
 }
 
+pub(crate) async fn build_compute_budget_instructions(
+    rpc_client: &RpcClient,
+    instructions: &[Instruction],
+    payer: &Pubkey,
+    address_lookup_tables: Option<Vec<AddressLookupTableAccount>>,
+    compute_config: &ComputeConfig,
+    fee_config: &FeeConfig,
+    rpc_config: &RpcConfig,
+    min_context_slot: Option<u64>,
+) -> Result<Vec<Instruction>, String> {
+    let writable_accounts = get_writable_accounts(instructions);
+
+    let compute_units = match &compute_config.unit_limit {
+        ComputeUnitLimitStrategy::Dynamic => {
+            let estimated_compute_units = estimate_compute_units_at_commitment(
+                rpc_client,
+                instructions,
+                payer,
+                address_lookup_tables,
+                Some(rpc_client.commitment()),
+                min_context_slot,
+            )
+            .await?;
+
+            apply_compute_unit_margin(
+                estimated_compute_units,
+                fee_config.compute_unit_margin_multiplier,
+            )
+        }
+        ComputeUnitLimitStrategy::Exact(units) => {
+            validate_compute_unit_limit_strategy(&compute_config.unit_limit)?;
+            *units
+        }
+    };
+
+    get_compute_budget_instruction(
+        rpc_client,
+        compute_units,
+        payer,
+        rpc_config,
+        fee_config,
+        &writable_accounts,
+    )
+    .await
+}
+
 /// Calculate and return compute budget instructions for a transaction
 pub async fn get_compute_budget_instruction(
     client: &RpcClient,
@@ -137,12 +202,12 @@ pub async fn get_compute_budget_instruction(
     fee_config: &FeeConfig,
     writable_accounts: &[Pubkey],
 ) -> Result<Vec<Instruction>, String> {
-    let mut budget_instructions = Vec::new();
-    let compute_units_with_margin =
-        (compute_units as f64 * (fee_config.compute_unit_margin_multiplier)) as u32;
+    let compute_units =
+        apply_compute_unit_margin(compute_units, fee_config.compute_unit_margin_multiplier);
 
+    let mut budget_instructions = Vec::new();
     budget_instructions.push(ComputeBudgetInstruction::set_compute_unit_limit(
-        compute_units_with_margin,
+        compute_units,
     ));
 
     match &fee_config.priority_fee {
@@ -293,5 +358,77 @@ mod tests {
             config.unit_limit,
             ComputeUnitLimitStrategy::Exact(321)
         ));
+    }
+
+    #[test]
+    fn dynamic_compute_unit_limit_applies_margin_and_clamps() {
+        assert_eq!(apply_compute_unit_margin(100_000, 1.1), 110_000);
+        assert_eq!(apply_compute_unit_margin(1_350_000, 1.1), 1_400_000);
+    }
+
+    #[tokio::test]
+    async fn exact_compute_unit_limit_is_used_unchanged() {
+        let rpc_client = RpcClient::new("http://127.0.0.1:1".to_string());
+        let compute_config =
+            ComputeConfig::default().with_unit_limit(ComputeUnitLimitStrategy::Exact(1_400_000));
+        let fee_config = FeeConfig::default();
+        let rpc_config = RpcConfig::default();
+
+        let instructions = build_compute_budget_instructions(
+            &rpc_client,
+            &[],
+            &Pubkey::default(),
+            None,
+            &compute_config,
+            &fee_config,
+            &rpc_config,
+            None,
+        )
+        .await
+        .unwrap();
+
+        assert_eq!(instructions.len(), 1);
+        assert_eq!(
+            u32::from_le_bytes(instructions[0].data[1..5].try_into().unwrap()),
+            1_400_000
+        );
+    }
+
+    #[tokio::test]
+    async fn invalid_exact_compute_unit_limits_are_rejected() {
+        let rpc_client = RpcClient::new("http://127.0.0.1:1".to_string());
+        let too_large_config =
+            ComputeConfig::default().with_unit_limit(ComputeUnitLimitStrategy::Exact(1_400_001));
+        let fee_config = FeeConfig::default();
+        let rpc_config = RpcConfig::default();
+        let too_large = build_compute_budget_instructions(
+            &rpc_client,
+            &[],
+            &Pubkey::default(),
+            None,
+            &too_large_config,
+            &fee_config,
+            &rpc_config,
+            None,
+        )
+        .await
+        .unwrap_err();
+        assert!(too_large.contains("between 1 and 1,400,000"));
+
+        let zero_config =
+            ComputeConfig::default().with_unit_limit(ComputeUnitLimitStrategy::Exact(0));
+        let zero = build_compute_budget_instructions(
+            &rpc_client,
+            &[],
+            &Pubkey::default(),
+            None,
+            &zero_config,
+            &fee_config,
+            &rpc_config,
+            None,
+        )
+        .await
+        .unwrap_err();
+        assert!(zero.contains("between 1 and 1,400,000"));
     }
 }
