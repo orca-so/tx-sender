@@ -193,7 +193,7 @@ pub(crate) async fn build_compute_budget_instructions(
     .await
 }
 
-/// Calculate and return compute budget instructions for a transaction
+/// Build compute budget instructions using an already-finalized compute unit limit.
 pub async fn get_compute_budget_instruction(
     client: &RpcClient,
     compute_units: u32,
@@ -202,9 +202,6 @@ pub async fn get_compute_budget_instruction(
     fee_config: &FeeConfig,
     writable_accounts: &[Pubkey],
 ) -> Result<Vec<Instruction>, String> {
-    let compute_units =
-        apply_compute_unit_margin(compute_units, fee_config.compute_unit_margin_multiplier);
-
     let mut budget_instructions = Vec::new();
     budget_instructions.push(ComputeBudgetInstruction::set_compute_unit_limit(
         compute_units,
@@ -370,7 +367,7 @@ mod tests {
     async fn exact_compute_unit_limit_is_used_unchanged() {
         let rpc_client = RpcClient::new("http://127.0.0.1:1".to_string());
         let compute_config =
-            ComputeConfig::default().with_unit_limit(ComputeUnitLimitStrategy::Exact(1_400_000));
+            ComputeConfig::default().with_unit_limit(ComputeUnitLimitStrategy::Exact(200_000));
         let fee_config = FeeConfig::default();
         let rpc_config = RpcConfig::default();
 
@@ -390,7 +387,7 @@ mod tests {
         assert_eq!(instructions.len(), 1);
         assert_eq!(
             u32::from_le_bytes(instructions[0].data[1..5].try_into().unwrap()),
-            1_400_000
+            200_000
         );
     }
 
