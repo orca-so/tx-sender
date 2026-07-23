@@ -12,6 +12,6 @@
     "@orca-so/tx-sender": "*",
     "typedoc": "^0.28.1",
     "typedoc-plugin-merge-modules": "^7.0.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   }
 }
