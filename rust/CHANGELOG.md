@@ -1,5 +1,13 @@
 # @orca-so/rust-tx-sender
 
+## 4.0.1
+
+### Patch Changes
+
+- [#30](https://github.com/orca-so/tx-sender/pull/30) [`8d237f1`](https://github.com/orca-so/tx-sender/commit/8d237f1ead9bd69169330268f203cd8db85056ab) Thanks [@jshiohaha](https://github.com/jshiohaha)! - Preserve exact compute unit limits without applying the configured margin. Dynamically estimated limits continue to apply the margin and are capped at 1,400,000 compute units, while invalid exact limits now return an error.
+
+- [#28](https://github.com/orca-so/tx-sender/pull/28) [`6458501`](https://github.com/orca-so/tx-sender/commit/645850145b80fc70c81add6afa7845dd48d3c933) Thanks [@jshiohaha](https://github.com/jshiohaha)! - change license email
+
 ## 4.0.0
 
 ### Major Changes
