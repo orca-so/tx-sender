@@ -153,41 +153,27 @@ pub async fn build_transaction_with_config_obj(
     rpc_client: &RpcClient,
     config: &BuildTransactionConfig,
 ) -> Result<VersionedTransaction, String> {
+    let address_lookup_tables_clone = address_lookup_tables.clone();
+
+    let rpc_config = &config.rpc_config;
+    let fee_config = &config.fee_config;
+    let budget_instructions = compute_budget::build_compute_budget_instructions(
+        rpc_client,
+        &instructions,
+        payer,
+        address_lookup_tables_clone,
+        &config.compute_config,
+        fee_config,
+        rpc_config,
+        config.min_context_slot,
+    )
+    .await?;
+
     let recent_blockhash = rpc_client
         .get_latest_blockhash()
         .await
         .map_err(|e| format!("RPC Error: {}", e))?;
 
-    let writable_accounts = compute_budget::get_writable_accounts(&instructions);
-
-    let address_lookup_tables_clone = address_lookup_tables.clone();
-
-    let compute_units = match config.compute_config.unit_limit {
-        ComputeUnitLimitStrategy::Dynamic => {
-            compute_budget::estimate_compute_units_at_commitment(
-                rpc_client,
-                &instructions,
-                payer,
-                address_lookup_tables_clone,
-                Some(rpc_client.commitment()),
-                config.min_context_slot,
-            )
-            .await?
-        }
-        ComputeUnitLimitStrategy::Exact(units) => units,
-    };
-
-    let rpc_config = &config.rpc_config;
-    let fee_config = &config.fee_config;
-    let budget_instructions = compute_budget::get_compute_budget_instruction(
-        rpc_client,
-        compute_units,
-        payer,
-        rpc_config,
-        fee_config,
-        &writable_accounts,
-    )
-    .await?;
     for (i, budget_ix) in budget_instructions.into_iter().enumerate() {
         instructions.insert(i, budget_ix);
     }
